@@ -366,27 +366,6 @@ class WorldPremade(OrbitContent):
         
         return diam
 
-    def make_pressure(self) -> tuple:
-        size = self.world_size
-        type = self.world_type
-        pressure = 0
-        if size == 'Tiny' or type == 'Hadean':
-            category = 'None'
-        elif type == 'Chthonian':
-            category = 'Trace'
-        elif size == 'Small' and type == 'Rock':
-            category = 'Trace'
-        else:
-            factor = 1
-            if size == 'Small' and type == 'Ice':
-                factor = 10
-            if size == 'Large':
-                factor = 5
-            if type == 'Greenhouse':
-                factor *= 100
-            pressure = self.mass * factor * self.gravity
-            category = pressure_category(pressure)
-        return pressure, category
 
     def get_density(self):
         return self.density
