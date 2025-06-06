@@ -7,6 +7,7 @@ BlueDwarfTable = {
     'luminosity': [0.11, 0.7, 1.4]
 }
 
+
 # StEvoTable is the Stellar Evolution Table as per GURPS Space p. 103
 StEvoTable = {
     # The mass in solar masses
