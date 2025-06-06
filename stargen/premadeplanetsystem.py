@@ -208,7 +208,14 @@ class PreMadePlanetSystem:
         oldorbit = startorbit
         print(startorbit)
         neworbit = 0
-        while (allowed):
+        iteration_count = 0  # Add a counter to prevent infinite loops
+        max_iterations = 100  # Set a maximum number of iterations
+
+        while allowed:
+            iteration_count += 1
+            if iteration_count > max_iterations:
+                print("Max iterations reached, exiting loop to prevent infinite loop.")
+                break
             orbsep = OrbitalSpace[self.roller.roll_dice(3, 0)]
             neworbit = oldorbit / orbsep
             #print(neworbit)
