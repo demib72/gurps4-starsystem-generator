@@ -6,6 +6,7 @@ processing towards a nicely formatted PDF file.
 
 # from ..starsystem import StarSystem
 from ..data.tables import AtmCompAbbr
+import os
 
 class LatexWriter:
     def __init__(self, starsystem, filename='starsystem.tex'):
@@ -14,8 +15,9 @@ class LatexWriter:
 
     def write(self):
         # Ensure the file is saved in the 'text' directory
+        os.makedirs('text', exist_ok=True)
         filepath = f"text/{self.filename}"
-        
+
         # Open the file
         file = open(filepath, 'w')
 
