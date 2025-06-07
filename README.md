@@ -16,8 +16,11 @@ pip install -r requirements.txt
 
 ## Usage
 
-Run `run.py` to generate LaTeX and GIF outputs for a random star system. GIFs
-are saved in the `gifs/` directory and are named after the generated random
-system name with the star letter appended when multiple stars are present.
-World maps for any generated Garden worlds are saved as PNGs in the `maps/`
-directory using the same system name and planet identifier.
+Run `run.py` to generate output for a random star system. By default the
+information is written to a LaTeX file but a Dokuwiki formatted file can be
+created with `--format dokuwiki`. During execution you will be asked whether to
+create a system GIF or maps of any Garden worlds.
+GIFs are saved in the `gifs/` directory and are named after the generated
+random system name with the star letter appended when multiple stars are
+present. World maps for any generated Garden worlds are saved as PNGs in the
+`maps/` directory using the same system name and planet identifier.
