@@ -19,3 +19,5 @@ pip install -r requirements.txt
 Run `run.py` to generate LaTeX and GIF outputs for a random star system. GIFs
 are saved in the `gifs/` directory and are named after the generated random
 system name with the star letter appended when multiple stars are present.
+World maps for any generated Garden worlds are saved as PNGs in the `maps/`
+directory using the same system name and planet identifier.
