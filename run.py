@@ -32,7 +32,11 @@ def main():
             oc_dict = star.planetsystem.get_orbitcontents()
             for oc in oc_dict.values():
                 if hasattr(oc, 'get_type') and oc.get_type() == 'Garden':
-                    generate_world_map(f"maps/{name}_{oc.get_name()}.png")
+                    hydro = oc.get_hydrographic_cover()
+                    generate_world_map(
+                        f"maps/{name}_{oc.get_name()}.png",
+                        hydro,
+                    )
     else:
         print("Map generation skipped: missing dependencies")
 

@@ -19,6 +19,7 @@ class TestRun(unittest.TestCase):
         world = MagicMock()
         world.get_name.return_value = 'A4'
         world.get_type.return_value = 'Garden'
+        world.get_hydrographic_cover.return_value = 30
         ps = MagicMock()
         ps.get_orbitcontents.return_value = {'a': world}
         star = MagicMock(planetsystem=ps)
@@ -32,7 +33,7 @@ class TestRun(unittest.TestCase):
         LatexWriterMock.assert_called_once_with(instance, 'testname.tex')
         tex_instance.write.assert_called()
         sys.modules['stargen.utils.gifout'].render_system_gif.assert_called_once_with(instance, 'gifs/testname.gif')
-        sys.modules['stargen.utils.mapmaker'].generate_world_map.assert_called_once_with('maps/testname_A4.png')
+        sys.modules['stargen.utils.mapmaker'].generate_world_map.assert_called_once_with('maps/testname_A4.png', 30)
 
 if __name__ == '__main__':
     unittest.main()
