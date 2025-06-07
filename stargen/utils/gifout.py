@@ -73,7 +73,7 @@ def render_star_gif(star, filepath, frames=360):
             yi = semi_major * np.sqrt(1 - ecc ** 2) * np.sin(E)
             x = xi * np.cos(rot) - yi * np.sin(rot)
             y = yi * np.cos(rot) + xi * np.sin(rot)
-            planets[idx].set_data(x, y)
+            planets[idx].set_data([x], [y])
             artists.append(planets[idx])
             vel = (2 * np.pi) / body['orbital_period']
             if body['position'] < 2 * np.pi - vel:
