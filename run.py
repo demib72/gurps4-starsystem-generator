@@ -1,20 +1,14 @@
+import sys
 import argparse
 from stargen import StarSystem
 from stargen.utils.latexout import LatexWriter
 from stargen.utils.dokuwikiout import DokuwikiWriter
 from stargen.utils.random_name import generate_random_name
+from stargen.utils.gifout import render_system_gif
+from stargen.utils.mapmaker import generate_world_map
 
 def main(args=None):
-    try:
-        from stargen.utils.gifout import render_system_gif
-    except ImportError:
-        render_system_gif = None
-
-    try:
-        from stargen.utils.mapmaker import generate_world_map
-    except ImportError:
-        generate_world_map = None
-
+    print(args)
     parser = argparse.ArgumentParser(description="Generate a random star system")
     parser.add_argument(
         "--format",
@@ -25,6 +19,8 @@ def main(args=None):
     if args is None:
         args = []
     parsed = parser.parse_args(args)
+
+    print(parsed.format)
 
     name = generate_random_name()
     if parsed.format == "dokuwiki":
@@ -43,12 +39,10 @@ def main(args=None):
     system_gif = input("Do you want a gif of the system? [Y/N]: ")
     world_map = input("Do you want a map of the garden world(s)? [Y/N]: ")
 
-    if system_gif.lower() == 'y' and render_system_gif:
+    if system_gif.lower() == 'y':
         render_system_gif(star_system, f"gifs/{name}.gif")
-    elif system_gif.lower() == 'y':
-        print("GIF generation skipped: missing dependencies")
 
-    if world_map.lower() == 'y' and generate_world_map:
+    if world_map.lower() == 'y':
         for star in star_system.stars:
             oc_dict = star.planetsystem.get_orbitcontents()
             for oc in oc_dict.values():
@@ -58,11 +52,9 @@ def main(args=None):
                         f"maps/{name}_{oc.get_name()}.png",
                         hydro,
                     )
-    elif world_map.lower() == 'y':
-        print("Map generation skipped: missing dependencies")
 
     print(filename)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

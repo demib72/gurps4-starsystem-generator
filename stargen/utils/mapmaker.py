@@ -1,68 +1,44 @@
-"""Simple procedural world map generator."""
-
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.ndimage import gaussian_filter
-import cartopy.crs as ccrs
-from matplotlib.colors import ListedColormap
-
+from opensimplex import OpenSimplex
 
 def generate_world_map(filepath: str, hydrographic_cover: int) -> None:
-    """Generate a random world map and save it as ``filepath``.
+    """Generate a procedural world map with given water coverage and save it as a PNG."""
 
-    Parameters
-    ----------
-    filepath:
-        Path of the PNG file to create.
-    hydrographic_cover:
-        Percentage of the world's surface covered by water (0-100).
-    """
+    # === Settings ===
+    width, height = 1024, 512
+    scale = 150.0
+    seed = 42
+    tmp = OpenSimplex(seed)
+    
+    # === Create elevation map using OpenSimplex noise ===
+    elevation = np.zeros((height, width), dtype=np.float32)
 
-    # Create output directory if needed
+    for y in range(height):
+        for x in range(width):
+            nx = x / scale
+            ny = y / scale
+            elevation[y, x] = tmp.noise2(nx, ny)
+
+    # Normalize elevation to 0.0–1.0
+    elevation = (elevation - elevation.min()) / (elevation.max() - elevation.min())
+
+    # === Apply hydrographic cover: determine sea level threshold ===
+    sea_level = np.percentile(elevation, hydrographic_cover)
+    land_mask = elevation > sea_level
+
+    # === Create RGB image (blue ocean, terrain-colored land) ===
+    color_map = np.zeros((height, width, 3), dtype=np.float32)
+
+    # Ocean: blue
+    color_map[~land_mask] = [0.2, 0.6, 1.0]
+
+    # Land: use matplotlib terrain colormap
+    terrain_colors = plt.get_cmap("terrain")(elevation)
+    color_map[land_mask] = terrain_colors[land_mask, :3]
+
+    # === Save image ===
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
-
-    # Set up a grid in latitude and longitude. Mercator projection typically
-    # excludes the poles, so we limit latitude to about ±85°.
-    n_lon = 720   # resolution in longitude
-    n_lat = 340   # resolution in latitude
-    lon = np.linspace(-180, 180, n_lon)
-    lat = np.linspace(-85, 85, n_lat)
-
-    # Create a random noise field and smooth it to simulate realistic continent
-    # shapes.
-    noise = np.random.rand(n_lat, n_lon)
-    smooth_noise = gaussian_filter(noise, sigma=10)
-
-    # Determine a threshold based on the requested hydrographic coverage.
-    # ``hydrographic_cover`` represents the percentage of water, so we keep
-    # that fraction of pixels below the threshold.
-    threshold = np.percentile(smooth_noise, hydrographic_cover)
-    land_mask = smooth_noise > threshold
-
-    # Define a custom colormap: water in blue, land in green.
-    cmap = ListedColormap(['deepskyblue', 'forestgreen'])
-
-    # Plot the world map using a Mercator projection.
-    fig = plt.figure(figsize=(12, 6))
-    ax = plt.axes(projection=ccrs.Mercator())
-    ax.set_global()
-    ax.stock_img()  # show Earth background
-    ax.coastlines(linewidth=1)
-
-    # Plot the land/water mask. The image is plotted in PlateCarree coordinate
-    # space.
-    ax.imshow(
-        land_mask,
-        origin="upper",
-        extent=[-180, 180, -85, 85],
-        transform=ccrs.PlateCarree(),
-        cmap=cmap,
-    )
-
-    water = hydrographic_cover
-    land = 100 - water
-    ax.set_title(f"Example World Map ({water}% Water, {land}% Land)")
-    plt.savefig(filepath, bbox_inches="tight")
-    plt.close(fig)
+    plt.imsave(filepath, color_map)
 

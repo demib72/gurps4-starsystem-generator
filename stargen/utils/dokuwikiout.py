@@ -25,10 +25,9 @@ class DokuwikiWriter:
 
     def title(self):
         return (
-            "====== CAS: Computer-Assisted Starsystem ======\n\n"
-            "===== Summary =====\n"
-            "=== General Description ===\n\n"
-            "=== GM Notes ===\n\n"
+            "====== Starsystem Title ======\n\n"
+            "===== History =====\n"
+            "=== Description ===\n\n"
         )
 
     def starsystemprop(self):
@@ -123,8 +122,8 @@ class DokuwikiWriter:
     def planetdetails(self, planet):
         """Return dokuwiki table with details about a terrestrial planet."""
         lines = [f"==== {planet.get_name()} ====\n"]
-        lines.append(f"**Type:** {planet.get_type()}\n\n")
         lines.append("|^Property^Value^|\n")
+        lines.append(f"|Type|{planet.get_type()}|\n")
         atkeys = [key for key in planet.atmcomp.keys() if planet.atmcomp[key]]
         abbr = ", ".join(AtmCompAbbr[k] for k in atkeys)
         if abbr:
@@ -139,7 +138,7 @@ class DokuwikiWriter:
             f"|Hydrographic Coverage|{planet.get_hydrographic_cover():.0f} %|\n"
         )
         lines.append(
-            f"|Average T_surf|{planet.get_average_surface_temp():.1f} K|\n"
+            f"|Average Surface Temp|{planet.get_average_surface_temp():.1f} K|\n"
         )
         lines.append(f"|Climate Type|{planet.get_climate()}|\n")
         lines.append(
@@ -160,8 +159,8 @@ class DokuwikiWriter:
     def gasgiantdetails(self, gasgiant):
         """Return dokuwiki table with details about a gas giant."""
         lines = [f"==== {gasgiant.get_name()} ====\n"]
-        lines.append("**Type:** Gas Giant\n\n")
         lines.append("|^Property^Value^|\n")
+        lines.append("|Type|Gas Giant|\n")
         lines.append(f"|Mass|{gasgiant.get_mass()} Earth Masses|\n")
         lines.append(f"|Density|{gasgiant.get_density()} Earth Densities|\n")
         lines.append(
@@ -203,7 +202,7 @@ class DokuwikiWriter:
             f"|Hydrographic Coverage|{moon.get_hydrographic_cover():.0f} %|\n"
         )
         lines.append(
-            f"|Average T_surf|{moon.get_average_surface_temp():.1f} K|\n"
+            f"|Average Surface Temp|{moon.get_average_surface_temp():.1f} K|\n"
         )
         lines.append(f"|Climate Type|{moon.get_climate()}|\n")
         lines.append(
