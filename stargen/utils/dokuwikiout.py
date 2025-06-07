@@ -108,21 +108,108 @@ class DokuwikiWriter:
         return "".join(lines)
 
     def psdetails(self, planetsystem):
+        """Return formatted details of all bodies in a planet system."""
         lines = []
         oc = planetsystem.get_orbitcontents()
         for skey in sorted(oc):
             body = oc[skey]
-            if body.type() != "Terrestrial":
-                continue
-            lines.append(f"==== {body.get_name()} ====\n")
-            lines.append(f"**Type:** {body.get_type()}\n\n")
-            header = "|^Property^Value^|\n"
-            lines.append(header)
-            lines.append(f"|Pressure|{body.get_pressure():.2f} atm, {body.get_pressure_category()}|\n")
-            lines.append(f"|Hydrographic Coverage|{body.get_hydrographic_cover()} %|\n")
-            atcomp = body.atmcomp
-            atkeys = [key for key in atcomp.keys() if atcomp[key] is True]
-            abbr = ", ".join(AtmCompAbbr[k] for k in atkeys)
+            btype = body.type()
+            if btype == "Terrestrial":
+                lines.append(self.planetdetails(body))
+            elif btype == "Gas Giant":
+                lines.append(self.gasgiantdetails(body))
+        return "".join(lines)
+
+    def planetdetails(self, planet):
+        """Return dokuwiki table with details about a terrestrial planet."""
+        lines = [f"==== {planet.get_name()} ====\n"]
+        lines.append(f"**Type:** {planet.get_type()}\n\n")
+        lines.append("|^Property^Value^|\n")
+        atkeys = [key for key in planet.atmcomp.keys() if planet.atmcomp[key]]
+        abbr = ", ".join(AtmCompAbbr[k] for k in atkeys)
+        if abbr:
             lines.append(f"|Atmospheric Composition|{abbr}|\n")
-            lines.append("\n")
+        if planet.get_pressure() == 0:
+            lines.append("|Pressure|None|\n")
+        else:
+            lines.append(
+                f"|Pressure|{planet.get_pressure():.2f} atm, {planet.get_pressure_category()}|\n"
+            )
+        lines.append(
+            f"|Hydrographic Coverage|{planet.get_hydrographic_cover():.0f} %|\n"
+        )
+        lines.append(
+            f"|Average T_surf|{planet.get_average_surface_temp():.1f} K|\n"
+        )
+        lines.append(f"|Climate Type|{planet.get_climate()}|\n")
+        lines.append(
+            f"|Diameter|{planet.get_diameter():.3f} Earth Diameters|\n"
+        )
+        lines.append(f"|Surface Gravity|{planet.get_gravity():.2f} G|\n")
+        lines.append(f"|Affinity|{planet.get_affinity():+d}|\n")
+        if planet.num_moons() > 0:
+            lines.append(f"|Moons|{planet.num_moons()}|\n")
+        if planet.num_moonlets() > 0:
+            lines.append(f"|Moonlets|{planet.num_moonlets()}|\n")
+        lines.append("\n")
+        if planet.num_moons() > 0:
+            for m in planet.get_satellites():
+                lines.append(self.moondetails(m))
+        return "".join(lines)
+
+    def gasgiantdetails(self, gasgiant):
+        """Return dokuwiki table with details about a gas giant."""
+        lines = [f"==== {gasgiant.get_name()} ====\n"]
+        lines.append("**Type:** Gas Giant\n\n")
+        lines.append("|^Property^Value^|\n")
+        lines.append(f"|Mass|{gasgiant.get_mass()} Earth Masses|\n")
+        lines.append(f"|Density|{gasgiant.get_density()} Earth Densities|\n")
+        lines.append(
+            f"|Diameter|{gasgiant.get_diameter():.2f} Earth Diameters|\n"
+        )
+        lines.append(
+            f"|Cloud-Top Gravity|{gasgiant.get_gravity():.2f} G|\n"
+        )
+        lines.append(
+            f"|Satellites 1st Family|{len(gasgiant.get_first_family())}|\n"
+        )
+        lines.append(
+            f"|Satellites 2nd Family|{len(gasgiant.get_moons())}|\n"
+        )
+        lines.append(
+            f"|Satellites 3rd Family|{len(gasgiant.get_third_family())}|\n"
+        )
+        lines.append("\n")
+        for m in gasgiant.get_moons():
+            lines.append(self.moondetails(m))
+        return "".join(lines)
+
+    def moondetails(self, moon):
+        """Return dokuwiki table with details about a moon."""
+        lines = [f"=== Moon {moon.get_name()} ===\n"]
+        lines.append("|^Property^Value^|\n")
+        lines.append(f"|Type|{moon.get_size()} ({moon.get_type()})|\n")
+        atkeys = [key for key in moon.atmcomp.keys() if moon.atmcomp[key]]
+        abbr = ", ".join(AtmCompAbbr[k] for k in atkeys)
+        if abbr:
+            lines.append(f"|Atm. Comp.|{abbr}|\n")
+        if moon.get_pressure() == 0:
+            lines.append("|Pressure|None|\n")
+        else:
+            lines.append(
+                f"|Pressure|{moon.get_pressure():.2f} atm, {moon.get_pressure_category()}|\n"
+            )
+        lines.append(
+            f"|Hydrographic Coverage|{moon.get_hydrographic_cover():.0f} %|\n"
+        )
+        lines.append(
+            f"|Average T_surf|{moon.get_average_surface_temp():.1f} K|\n"
+        )
+        lines.append(f"|Climate Type|{moon.get_climate()}|\n")
+        lines.append(
+            f"|Diameter|{moon.get_diameter():.3f} Earth Diameters|\n"
+        )
+        lines.append(f"|Surface Gravity|{moon.get_gravity():.2f} G|\n")
+        lines.append(f"|Affinity|{moon.get_affinity():+d}|\n")
+        lines.append("\n")
         return "".join(lines)
