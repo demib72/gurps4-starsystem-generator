@@ -8,6 +8,11 @@ def main():
     except ImportError:
         render_system_gif = None
 
+    try:
+        from stargen.utils.mapmaker import generate_world_map
+    except ImportError:
+        generate_world_map = None
+
     name = generate_random_name()
     filename = f"{name}.tex"
     # testsystem = StarSystem()
@@ -21,6 +26,15 @@ def main():
         render_system_gif(star_system, f"gifs/{name}.gif")
     else:
         print("GIF generation skipped: missing dependencies")
+
+    if generate_world_map:
+        for star in star_system.stars:
+            oc_dict = star.planetsystem.get_orbitcontents()
+            for oc in oc_dict.values():
+                if hasattr(oc, 'get_type') and oc.get_type() == 'Garden':
+                    generate_world_map(f"maps/{name}_{oc.get_name()}.png")
+    else:
+        print("Map generation skipped: missing dependencies")
 
     print(filename)
 
