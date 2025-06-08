@@ -6,6 +6,7 @@ from stargen.utils.dokuwikiout import DokuwikiWriter
 from stargen.utils.random_name import generate_random_name
 from stargen.utils.gifout import render_system_gif
 from stargen.utils.mapmaker import generate_world_map
+from stargen.utils.serializer import dump_json
 
 def main(args=None):
     print(args)
@@ -15,6 +16,12 @@ def main(args=None):
         choices=["latex", "dokuwiki"],
         default="latex",
         help="Output format",
+    )
+    parser.add_argument(
+        "--json",
+        metavar="FILE",
+        help="Write JSON representation to FILE",
+        default=None,
     )
     if args is None:
         args = []
@@ -35,6 +42,9 @@ def main(args=None):
 
     star_system.print_info()
     writer.write()
+
+    if parsed.json:
+        dump_json(star_system, parsed.json)
 
     system_gif = input("Do you want a gif of the system? [Y/N]: ")
     world_map = input("Do you want a map of the garden world(s)? [Y/N]: ")
