@@ -1,6 +1,6 @@
 import sys
 import argparse
-from stargen import StarSystem
+from stargen import generate_star_system
 from stargen.utils.latexout import LatexWriter
 from stargen.utils.dokuwikiout import DokuwikiWriter
 from stargen.utils.random_name import generate_random_name
@@ -37,7 +37,7 @@ def main(args=None):
         filename = f"{name}.tex"
         writer_cls = LatexWriter
 
-    star_system = StarSystem()
+    star_system = generate_star_system()
     writer = writer_cls(star_system, filename)
 
     star_system.print_info()

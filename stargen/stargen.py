@@ -2,14 +2,28 @@ from .utils.dice import DiceRoller
 from .star import Star
 from .data.tables import OrbSepTable, StOEccTable
 from .utils.latexout import LatexWriter
+from .config.starsystem import StarSystemConfig
 
 class StarSystem:
     roller = DiceRoller()
 
-    def __init__(self) -> None:
-        self.open_cluster = self.open_cluster()
-        self.num_stars = self.number_stars()
-        self.age = self.system_age()
+    def __init__(self, config: StarSystemConfig | None = None) -> None:
+        self._config = config or StarSystemConfig()
+        self.open_cluster = (
+            self._config.open_cluster
+            if self._config.open_cluster is not None
+            else self.open_cluster_question()
+        )
+        self.num_stars = (
+            self._config.num_stars
+            if self._config.num_stars is not None
+            else self.number_stars_question()
+        )
+        self.age = (
+            self._config.age
+            if self._config.age is not None
+            else self.system_age_question()
+        )
         self.stars = self.generate_stars(self.num_stars)
         self.stars = sorted(
             self.stars, key=lambda star: star.get_mass(), reverse=True
@@ -47,7 +61,7 @@ class StarSystem:
 
         return answer
 
-    def open_cluster(self) -> bool:
+    def open_cluster_question(self) -> bool:
         """
         f
         """
@@ -63,7 +77,7 @@ class StarSystem:
             else:
                 return False
 
-    def number_stars(self) -> int:
+    def number_stars_question(self) -> int:
         """
         f
         """
@@ -84,7 +98,7 @@ class StarSystem:
         else:
             return int(num_stars)
 
-    def system_age(self) -> float:
+    def system_age_question(self) -> float:
         """
         f
         """

@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head><title>Star System Generator</title></head>
+<body>
+  <form action="/generate" method="post">
+    <label>Open Cluster:
+      <select name="open_cluster">
+        <option value="">Random</option>
+        <option value="true">True</option>
+        <option value="false">False</option>
+      </select>
+    </label><br>
+    <label>Number of Stars: <input type="text" name="num_stars"></label><br>
+    <label>Age (billion years): <input type="text" name="age"></label><br>
+    <button type="submit">Generate</button>
+  </form>
+</body>
+</html>
